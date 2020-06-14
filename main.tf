@@ -28,8 +28,8 @@ data "aws_iam_server_certificate" "asg" {
 }
 
 data "aws_acm_certificate" "asg" {
-  count  = length(var.acm_certificate_domain) > 0 ? 1 - var.create_certificate : 0
-  domain = var.acm_certificate_domain
+  count       = length(var.acm_certificate_domain) > 0 ? 1 - var.create_certificate : 0
+  domain      = var.acm_certificate_domain
   most_recent = true
 }
 
