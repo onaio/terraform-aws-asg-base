@@ -365,6 +365,23 @@ resource "aws_alb_listener_rule" "redirect_paths" {
   }
 }
 
+resource "aws_alb_listener_rule" "host_based_routing" {
+  count = length(var.routing_hosts)
+
+  listener_arn = element(concat(aws_alb_listener.https_listener.*.arn, aws_alb_listener.https_listener_1.*.arn), 0)
+
+  action {
+    type             = "forward"
+    target_group_arn = element(var.routing_hosts, count.index).target_group_arn
+  }
+
+  condition {
+    host_header {
+      values = element(var.routing_hosts, count.index).host_headers
+    }
+  }
+}
+
 data "aws_acm_certificate" "extra" {
   count    = length(var.additional_ssl_certs)
   domain   = element(var.additional_ssl_certs, count.index)
