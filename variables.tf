@@ -168,3 +168,12 @@ variable "asg_instance_https_cidr_blocks" {
   default     = []
   description = "List of CIDR blocks to allow incoming HTTPS traffic."
 }
+
+variable "routing_hosts" {
+  type = list(object({
+    host_headers     = list(string)
+    target_group_arn = string
+  }))
+  default     = []
+  description = "List of host header patterns to match and the target_group_arn to forward traffic to."
+}
