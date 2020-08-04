@@ -54,4 +54,13 @@ resource "aws_s3_bucket" "data" {
       }
     }
   }
+
+  cors_rule {
+    allowed_headers = var.bucket_cors_allowed_headers
+    allowed_methods = var.bucket_cors_allowed_methods
+    allowed_origins = var.bucket_cors_allowed_origins
+    expose_headers  = var.bucket_cors_expose_header
+    max_age_seconds = var.bucket_cors_max_age_seconds
+  }
+
 }

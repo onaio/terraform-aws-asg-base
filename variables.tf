@@ -177,3 +177,33 @@ variable "routing_hosts" {
   default     = []
   description = "List of host header patterns to match and the target_group_arn to forward traffic to."
 }
+
+variable "bucket_cors_allowed_headers" {
+  type        = list(string)
+  default     = []
+  description = "List of headers to allow in a preflight request through the 'Access-Control-Request-Headers' header"
+}
+
+variable "bucket_cors_allowed_methods" {
+  type        = list(string)
+  default     = []
+  description = "List of request methods that should be allowed. Support Methods: POST, GET, PUT, DELETE, HEAD"
+}
+
+variable "bucket_cors_allowed_origins" {
+  type        = list(string)
+  default     = []
+  description = "List of origins that should be allowed to make requests to the S3 bucket."
+}
+
+variable "bucket_cors_expose_header" {
+  type        = list(string)
+  default     = []
+  description = "List of headers that should be accessible in the response to a client."
+}
+
+variable "bucket_cors_max_age_seconds" {
+  type        = number
+  default     = 0
+  description = "Amount of seconds that a browser can cache the response"
+}
