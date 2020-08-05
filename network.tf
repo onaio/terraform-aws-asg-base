@@ -318,8 +318,9 @@ resource "aws_alb_listener_rule" "http-ignore-rules" {
   }
 
   condition {
-    field  = "path-pattern"
-    values = [element(var.ignore_paths, count.index)]
+    path_pattern{
+      values = [element(var.ignore_paths, count.index)]
+    }
   }
 }
 
@@ -339,8 +340,9 @@ resource "aws_alb_listener_rule" "https-ignore-rules" {
   }
 
   condition {
-    field  = "path-pattern"
-    values = [element(var.ignore_paths, count.index)]
+    path_pattern{
+       values = [element(var.ignore_paths, count.index)]
+    }
   }
 }
 
@@ -360,8 +362,9 @@ resource "aws_alb_listener_rule" "redirect_paths" {
   }
 
   condition {
-    field  = "path-pattern"
-    values = [element(var.redirect_paths, count.index).condition]
+    path_pattern {
+       values = [element(var.redirect_paths, count.index).condition]
+    }
   }
 }
 

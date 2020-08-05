@@ -14,7 +14,6 @@ resource "aws_s3_bucket" "asg-logs" {
   }
 }
 
-
 provider "aws" {
   alias  = "s3provider"
   region = var.data_bucket_region
