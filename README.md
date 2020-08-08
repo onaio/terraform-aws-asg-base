@@ -1,4 +1,4 @@
-# Auto-scaling Base Terraform module
+# Auto-scaling Base Terraform module [![Build Status](https://github.com/onaio/terraform-aws-asg-base/workflows/CI/badge.svg)](https://github.com/onaio/terraform-aws-asg-base/actions?query=workflow%3ACI)
 
 This module configures the aws security group, aws route53 cnames, aws alb, aws alb target groups, aws alb listeners for an auto-scaling setup. It has `target_group_arns` and `security_groups` as outputs.
 
