@@ -180,25 +180,25 @@ variable "routing_hosts" {
 
 variable "bucket_cors_allowed_headers" {
   type        = list(string)
-  default     = []
+  default     = ["*"]
   description = "List of headers to allow in a preflight request through the 'Access-Control-Request-Headers' header"
 }
 
 variable "bucket_cors_allowed_methods" {
   type        = list(string)
-  default     = []
+  default     = ["DELETE", "GET", "HEAD", "POST", "PUT"]
   description = "List of request methods that should be allowed. Support Methods: POST, GET, PUT, DELETE, HEAD"
 }
 
 variable "bucket_cors_allowed_origins" {
   type        = list(string)
-  default     = []
+  default     = ["*"]
   description = "List of origins that should be allowed to make requests to the S3 bucket."
 }
 
 variable "bucket_cors_expose_header" {
   type        = list(string)
-  default     = []
+  default     = ["ETag"]
   description = "List of headers that should be accessible in the response to a client."
 }
 
