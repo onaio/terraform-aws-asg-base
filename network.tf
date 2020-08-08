@@ -253,25 +253,19 @@ resource "aws_acm_certificate" "cert" {
 }
 
 resource "aws_route53_record" "cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.cert[0].domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
+  count      = var.create_certificate == 1 ? length(var.cnames) + 1 : 0
   depends_on = [aws_acm_certificate.cert]
-  name       = each.value.name
-  type       = each.value.type
+  name       = lookup(aws_acm_certificate.cert[0].domain_validation_options[count.index], "resource_record_name")
+  type       = lookup(aws_acm_certificate.cert[0].domain_validation_options[count.index], "resource_record_type")
   zone_id    = data.aws_route53_zone.primary[0].id
-  records    = [each.value.record]
+  records    = [lookup(aws_acm_certificate.cert[0].domain_validation_options[count.index], "resource_record_value")]
   ttl        = 60
 }
 
 resource "aws_acm_certificate_validation" "cert" {
   count                   = var.create_certificate
   certificate_arn         = aws_acm_certificate.cert[count.index].arn
-  validation_record_fqdns = values(aws_route53_record.cert_validation)[*].fqdn
+  validation_record_fqdns = aws_route53_record.cert_validation.*.fqdn
 
   timeouts {
     create = "1h"
