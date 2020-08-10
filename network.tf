@@ -255,10 +255,10 @@ resource "aws_acm_certificate" "cert" {
 resource "aws_route53_record" "cert_validation" {
   count      = var.create_certificate == 1 ? length(var.cnames) + 1 : 0
   depends_on = [aws_acm_certificate.cert]
-  name       = lookup(aws_acm_certificate.cert[0].domain_validation_options[count.index], "resource_record_name")
-  type       = lookup(aws_acm_certificate.cert[0].domain_validation_options[count.index], "resource_record_type")
+  name       = lookup(element(tolist(aws_acm_certificate.cert[0].domain_validation_options[*]), count.index), "resource_record_name")
+  type       = lookup(element(tolist(aws_acm_certificate.cert[0].domain_validation_options[*]), count.index), "resource_record_type")
   zone_id    = data.aws_route53_zone.primary[0].id
-  records    = [lookup(aws_acm_certificate.cert[0].domain_validation_options[count.index], "resource_record_value")]
+  records    = [lookup(element(tolist(aws_acm_certificate.cert[0].domain_validation_options[*]), count.index), "resource_record_value")]
   ttl        = 60
 }
 
