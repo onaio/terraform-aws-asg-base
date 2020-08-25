@@ -207,3 +207,39 @@ variable "bucket_cors_max_age_seconds" {
   default     = 0
   description = "Amount of seconds that a browser can cache the response"
 }
+
+variable "cloudwatch_alarm_requests_5xx_count_evaluation_periods" {
+  type        = string
+  default     = "1"
+  description = "The number of periods over which data is compared to the specified threshold."
+}
+
+variable "cloudwatch_alarm_requests_5xx_count_period" {
+  type        = string
+  default     = "300"
+  description = "The period in seconds over which the sum is applied."
+}
+
+variable "cloudwatch_alarm_requests_5xx_threshold" {
+  type        = number
+  default     = 50
+  description = "The threshold of number of 5xx requests that if crossed, an alarm will be raised."
+}
+
+variable "cloudwatch_alarm_actions" {
+  type        = list(string)
+  default     = []
+  description = "The list of actions to execute when this alarm transitions into an ALARM state from any other state. Each action is specified as an Amazon Resource Name (ARN)."
+}
+
+variable "cloudwatch_insufficient_data_actions" {
+  type        = list(string)
+  default     = []
+  description = "The list of actions to execute when this alarm transitions into an INSUFFICIENT_DATA state from any other state. Each action is specified as an Amazon Resource Name (ARN)."
+}
+
+variable "cloudwatch_ok_actions" {
+  type        = list(string)
+  default     = []
+  description = "The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Name (ARN)."
+}

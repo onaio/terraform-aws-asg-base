@@ -396,3 +396,23 @@ resource "aws_lb_listener_certificate" "https_certificate" {
   listener_arn    = element(concat(aws_alb_listener.https_listener.*.arn, aws_alb_listener.https_listener_1.*.arn), 0)
   certificate_arn = element(data.aws_acm_certificate.extra.*.arn, count.index)
 }
+
+resource "aws_cloudwatch_metric_alarm" "requests_5xx_count" {
+  alarm_name                = "${aws_alb.asg.name}-requests-5xx-count"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = var.cloudwatch_alarm_requests_5xx_count_evaluation_periods
+  metric_name               = "HTTPCode_Target_5XX_Count"
+  namespace                 = "AWS/ApplicationELB"
+  period                    = var.cloudwatch_alarm_requests_5xx_count_period
+  statistic                 = "Sum"
+  threshold                 = var.cloudwatch_alarm_requests_5xx_threshold
+  alarm_actions             = var.cloudwatch_alarm_actions
+  ok_actions                = var.cloudwatch_ok_actions
+  insufficient_data_actions = var.cloudwatch_insufficient_data_actions
+  treat_missing_data        = "notBreaching"
+
+  dimensions = {
+    LoadBalancer = aws_alb.asg.arn_suffix
+    TargetGroup  = aws_alb_target_group.http.arn_suffix
+  }
+}
