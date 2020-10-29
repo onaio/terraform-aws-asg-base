@@ -101,9 +101,9 @@ resource "aws_security_group" "asg_instance" {
 }
 
 resource "aws_route53_record" "asg" {
-  count   = var.create_route53_records ? 1 : 0
-  zone_id = data.aws_route53_zone.primary[0].zone_id
-  name    = var.service_domain
+  count   = length(var.service_domains)
+  zone_id = data.aws_route53_zone.primary[var.service_domains[count.index]].zone_id
+  name    = var.service_domains[count.index]
   type    = "A"
 
   alias {
@@ -115,7 +115,7 @@ resource "aws_route53_record" "asg" {
 
 resource "aws_route53_record" "asg-cnames" {
   count   = length(var.cnames)
-  zone_id = data.aws_route53_zone.primary[0].zone_id
+  zone_id = data.aws_route53_zone.primary[element(var.cnames, count.index)].zone_id
   name    = element(var.cnames, count.index)
   type    = "CNAME"
   ttl     = "300"
@@ -233,9 +233,9 @@ resource "aws_alb_listener" "http_listener" {
 
 resource "aws_acm_certificate" "cert" {
   count                     = var.create_certificate
-  domain_name               = var.service_domain
+  domain_name               = var.service_domains[0]
   validation_method         = "DNS"
-  subject_alternative_names = var.cnames
+  subject_alternative_names = length(var.service_domains) > 1 ? concat(slice(var.service_domains, 1, length(var.service_domains)), var.cnames) : var.cnames
 
   tags = {
     Name            = join("-", [var.project_id, var.deployed_app, var.env])
@@ -253,11 +253,11 @@ resource "aws_acm_certificate" "cert" {
 }
 
 resource "aws_route53_record" "cert_validation" {
-  count      = var.create_certificate == 1 ? length(var.cnames) + 1 : 0
+  count      = var.create_certificate == 1 ? length(var.cnames) + length(var.service_domains) : 0
   depends_on = [aws_acm_certificate.cert]
   name       = lookup(element(tolist(aws_acm_certificate.cert[0].domain_validation_options[*]), count.index), "resource_record_name")
   type       = lookup(element(tolist(aws_acm_certificate.cert[0].domain_validation_options[*]), count.index), "resource_record_type")
-  zone_id    = data.aws_route53_zone.primary[0].id
+  zone_id    = data.aws_route53_zone.primary[lookup(element(tolist(aws_acm_certificate.cert[0].domain_validation_options[*]), count.index), "domain_name")].id
   records    = [lookup(element(tolist(aws_acm_certificate.cert[0].domain_validation_options[*]), count.index), "resource_record_value")]
   ttl        = 60
 }
@@ -361,9 +361,23 @@ resource "aws_alb_listener_rule" "redirect_paths" {
     }
   }
 
-  condition {
-    path_pattern {
-      values = [element(var.redirect_paths, count.index).condition]
+  dynamic "condition" {
+    for_each = length(lookup(element(var.redirect_paths, count.index), "path_pattern_conditions", [])) > 0 ? toset(["path_pattern_conditions"]) : toset([])
+
+    content {
+      path_pattern {
+        values = element(var.redirect_paths, count.index).path_pattern_conditions
+      }
+    }
+  }
+
+  dynamic "condition" {
+    for_each = length(lookup(element(var.redirect_paths, count.index), "host_header_conditions", [])) > 0 ? toset(["host_header_conditions"]) : toset([])
+
+    content {
+      host_header {
+        values = element(var.redirect_paths, count.index).host_header_conditions
+      }
     }
   }
 }
