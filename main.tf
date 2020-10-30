@@ -1,6 +1,6 @@
 data "aws_route53_zone" "primary" {
-  count = var.create_route53_records ? 1 : 0
-  name  = var.route53_zone_name
+  for_each = var.route53_zone_names
+  name     = each.value
 }
 
 data "aws_security_group" "default" {

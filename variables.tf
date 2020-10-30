@@ -52,8 +52,12 @@ variable "create_certificate" {
   default = 0
 }
 
-variable "route53_zone_name" {}
-variable "service_domain" {}
+variable "route53_zone_names" {
+  type = map(any)
+}
+variable "service_domains" {
+  type = list(string)
+}
 variable "iam_server_ssl_cert" {
   type        = string
   default     = ""
