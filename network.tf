@@ -101,7 +101,7 @@ resource "aws_security_group" "asg_instance" {
 }
 
 resource "aws_route53_record" "asg" {
-  count   = length(var.service_domains)
+  count   = var.create_route53_records ? length(var.service_domains) : 0
   zone_id = data.aws_route53_zone.primary[var.service_domains[count.index]].zone_id
   name    = var.service_domains[count.index]
   type    = "A"
@@ -114,7 +114,7 @@ resource "aws_route53_record" "asg" {
 }
 
 resource "aws_route53_record" "asg-cnames" {
-  count   = length(var.cnames)
+  count   = var.create_route53_records ? length(var.cnames) : 0
   zone_id = data.aws_route53_zone.primary[element(var.cnames, count.index)].zone_id
   name    = element(var.cnames, count.index)
   type    = "CNAME"
