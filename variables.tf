@@ -17,7 +17,7 @@ variable "alb_idle_timeout" {
 }
 
 variable "alb_logs_user_identifiers" {
-  type = list
+  type = list(any)
 }
 variable "enable_alb_logs" {
   type    = bool
@@ -69,11 +69,11 @@ variable "service_https_port" {
 }
 
 variable "cnames" {
-  type = list
+  type = list(any)
 }
 
 variable "subnet_ids" {
-  type = list
+  type = list(any)
 }
 
 variable "health_check_path" {
@@ -102,7 +102,7 @@ variable "https_health_check_matcher" {
 }
 
 variable "ignore_paths" {
-  type    = list
+  type    = list(any)
   default = []
 }
 
@@ -110,7 +110,7 @@ variable "deployed_app" {}
 
 variable "redirect_paths" {
   default = []
-  type    = list
+  type    = list(any)
 }
 
 variable "create_route53_records" {
@@ -132,7 +132,7 @@ variable "acm_certificate_domain" {
 }
 
 variable "asg_ssh_cidr_blocks" {
-  type    = list
+  type    = list(any)
   default = ["0.0.0.0/0"]
 }
 
@@ -147,7 +147,7 @@ variable "asg_https_cidr_blocks" {
 }
 
 variable "additional_ssl_certs" {
-  type    = list
+  type    = list(any)
   default = []
 }
 
@@ -162,7 +162,7 @@ variable "target_group_protocol" {
 }
 
 variable "asg_instance_http_cidr_blocks" {
-  type        = list
+  type        = list(any)
   default     = []
   description = "List of CIDR blocks to allow incoming HTTP traffic."
 }
