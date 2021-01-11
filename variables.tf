@@ -247,3 +247,9 @@ variable "cloudwatch_ok_actions" {
   default     = []
   description = "The list of actions to execute when this alarm transitions into an OK state from any other state. Each action is specified as an Amazon Resource Name (ARN)."
 }
+
+variable "additional_security_groups" {
+  type        = list(string)
+  default     = []
+  description = "A list of additional security groups to attach to instances."
+}

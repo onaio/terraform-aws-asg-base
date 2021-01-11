@@ -3,7 +3,7 @@ output "target_group_arns" {
 }
 
 output "security_groups" {
-  value = [aws_security_group.asg_instance.id]
+  value = concat([aws_security_group.asg_instance.id], var.additional_security_groups)
 }
 
 output "asg_https_listeners_arn" {
