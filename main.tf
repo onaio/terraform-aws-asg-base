@@ -62,7 +62,7 @@ resource "aws_iam_user" "s3-user" {
 }
 
 data "aws_iam_user" "s3-user" {
-  count     = ! var.create_s3_user && var.create_s3_bucket ? 1 : 0
+  count     = !var.create_s3_user && var.create_s3_bucket ? 1 : 0
   user_name = var.iam_s3_user
 }
 

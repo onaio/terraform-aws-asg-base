@@ -166,6 +166,8 @@ resource "aws_alb_target_group" "http" {
     matcher  = var.http_health_check_matcher
     protocol = var.http_health_check_protocol
     port     = var.http_health_check_port
+    timeout  = var.http_health_check_timeout
+    interval = var.http_health_check_interval
   }
 
   tags = {

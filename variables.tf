@@ -89,6 +89,14 @@ variable "http_health_check_protocol" {
   type    = string
 }
 
+variable "http_health_check_timeout" {
+  default = 5
+}
+
+variable "http_health_check_interval" {
+  default = 30
+}
+
 variable "https_health_check_port" {
   default = "traffic-port"
 }
