@@ -1,5 +1,5 @@
 output "target_group_arns" {
-  value = concat(list(aws_alb_target_group.http.arn), aws_alb_target_group.https.*.arn)
+  value = concat(tolist([aws_alb_target_group.http.arn]), aws_alb_target_group.https.*.arn)
 }
 
 output "security_groups" {
