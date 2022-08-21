@@ -1,7 +1,11 @@
+provider "aws" {
+  alias  = "s3provider"
+  region = var.data_bucket_region
+}
+
 resource "aws_s3_bucket" "asg-logs" {
   count  = var.enable_alb_logs ? 1 : 0
   bucket = join("-", [var.alb_bucket_name, var.env])
-  policy = data.aws_iam_policy_document.asg-logs[0].json
 
   tags = {
     Name            = join("-", [var.project_id, var.deployed_app, var.env])
@@ -14,9 +18,10 @@ resource "aws_s3_bucket" "asg-logs" {
   }
 }
 
-provider "aws" {
-  alias  = "s3provider"
-  region = var.data_bucket_region
+resource "aws_s3_bucket_policy" "asg-logs" {
+  count  = var.enable_alb_logs ? 1 : 0
+  bucket = aws_s3_bucket.asg-logs[count.index].id
+  policy = data.aws_iam_policy_document.asg-logs[count.index].json
 }
 
 # When using s3 from a different region you need to use a
@@ -33,7 +38,6 @@ provider "aws" {
 resource "aws_s3_bucket" "data" {
   count    = var.create_s3_bucket ? 1 : 0
   bucket   = var.data_bucket_name
-  policy   = data.aws_iam_policy_document.data[count.index].json
   provider = aws.s3provider
 
   tags = {
@@ -46,14 +50,17 @@ resource "aws_s3_bucket" "data" {
     DeploymentType  = var.deployment_type
   }
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
+}
 
+resource "aws_s3_bucket_policy" "data" {
+  count  = var.create_s3_bucket ? 1 : 0
+  bucket = var.data_bucket_name
+  policy = data.aws_iam_policy_document.data[count.index].json
+}
+
+resource "aws_s3_bucket_cors_configuration" "data" {
+  count  = var.create_s3_bucket ? 1 : 0
+  bucket = var.data_bucket_name
   cors_rule {
     allowed_headers = var.bucket_cors_allowed_headers
     allowed_methods = var.bucket_cors_allowed_methods
@@ -62,4 +69,15 @@ resource "aws_s3_bucket" "data" {
     max_age_seconds = var.bucket_cors_max_age_seconds
   }
 
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
+  count  = var.create_s3_bucket ? 1 : 0
+  bucket = var.data_bucket_name
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
 }
